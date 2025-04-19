@@ -5,13 +5,7 @@ import { DbMgr, SUPER_USER } from "@/wab/server/db/DbMgr";
 import { OauthTokenProvider, User } from "@/wab/server/entities/Entities";
 import "@/wab/server/extensions";
 import { superDbMgr, userDbMgr } from "@/wab/server/routes/util";
-import {
-  getAirtableSsoSecrets,
-  getGoogleClientId,
-  getGoogleClientSecret,
-  getGoogleSheetsClientId,
-  getGoogleSheetsClientSecret,
-} from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import {
   MultiOAuth2Strategy,
   OAuth2Config,
@@ -99,8 +93,8 @@ export async function setupPassport(
   passport.use(
     new GoogleStrategy(
       {
-        clientID: getGoogleClientId(),
-        clientSecret: getGoogleClientSecret(),
+        clientID: appConfig.google.clientId,
+        clientSecret: appConfig.google.clientSecret,
         callbackURL: `${config.host}/api/v1/oauth2/google/callback`,
         passReqToCallback: true,
       },
@@ -200,7 +194,7 @@ export async function setupPassport(
     )
   );
 
-  const airtableSsoSecrets = getAirtableSsoSecrets();
+  const airtableSsoSecrets = appConfig.airtableSso;
   if (airtableSsoSecrets) {
     const airtableStrategy = new OAuth2Strategy(
       {
@@ -238,8 +232,8 @@ export async function setupPassport(
   }
 
   // Google Sheets
-  const googleSheetsClientId = getGoogleSheetsClientId();
-  const googleSheetsClientSecret = getGoogleSheetsClientSecret();
+  const googleSheetsClientId = appConfig.googleSheets.clientId;
+  const googleSheetsClientSecret = appConfig.googleSheets.clientSecret;
   if (googleSheetsClientId && googleSheetsClientSecret) {
     const googleStrategy = new GoogleStrategy(
       {
