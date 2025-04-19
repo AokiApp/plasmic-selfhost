@@ -4,6 +4,7 @@ import { generateSomeApiToken } from "@/wab/server/util/Tokens";
 import fs from "fs";
 import { Connection, ConnectionOptions, createConnection } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { appConfig } from "../nfigure-config";
 
 export type TutorialType = "todo" | "northwind";
 export interface TutorialDbInfo {
@@ -14,7 +15,7 @@ export interface TutorialDbInfo {
 }
 
 export function getTutorialDbHost() {
-  return process.env.TUTORIAL_DB_HOST ?? "localhost";
+  return appConfig.tutorialDbHost ?? "localhost";
 }
 
 export async function createTutorialDb(
