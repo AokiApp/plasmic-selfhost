@@ -4,7 +4,7 @@ import {
   getUserRoleForApp,
 } from "@/wab/server/routes/end-user";
 import { superDbMgr } from "@/wab/server/routes/util";
-import { getEncryptionKey } from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import { makeStableEncryptor } from "@/wab/server/util/crypt";
 import { ProjectId, UserId } from "@/wab/shared/ApiSchema";
 import crypto from "crypto";
@@ -12,7 +12,7 @@ import { Request, Response } from "express-serve-static-core";
 import jwt from "jsonwebtoken";
 import { isString } from "lodash";
 
-const encryptor = makeStableEncryptor(getEncryptionKey());
+const encryptor = makeStableEncryptor(appConfig.encryptionKey);
 interface OauthCodeMeta {
   id: string;
   clientId: string;
@@ -157,7 +157,7 @@ function generateUserToken(appId: string, endUserId: string) {
       appId,
       endUserId,
     },
-    getEncryptionKey(),
+    appConfig.encryptionKey,
     {
       expiresIn: "7d",
     }
@@ -167,7 +167,7 @@ function generateUserToken(appId: string, endUserId: string) {
 
 function decodeUserToken(token: string) {
   try {
-    const info = jwt.verify(token, getEncryptionKey()) as {
+    const info = jwt.verify(token, appConfig.encryptionKey) as {
       appId: string;
       endUserId: string;
     };
