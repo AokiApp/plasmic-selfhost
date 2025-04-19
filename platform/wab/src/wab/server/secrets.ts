@@ -59,25 +59,10 @@ interface Secrets {
     discourseConnectSecret?: string;
     apiKey?: string;
   };
-  clickhouse?: {
-    host: string;
-    port: number;
-    username: string;
-    password: string;
-    database?: string;
-  };
   dynamodb?: {
     accessKeyId: string;
     secretAccessKey: string;
   };
-}
-
-export function getEncryptionKey() {
-  return loadSecrets().encryptionKey ?? "fake";
-}
-
-export function getOpEncryptionKey() {
-  return loadSecrets().dataSourceOperationEncryptionKey ?? "fake";
 }
 
 export function getGoogleClientId() {
@@ -86,14 +71,6 @@ export function getGoogleClientId() {
 
 export function getGoogleClientSecret() {
   return loadSecrets().google?.clientSecret ?? "fake";
-}
-
-export function getSmtpAuth() {
-  return loadSecrets().smtpAuth;
-}
-
-export function getIntercomToken() {
-  return loadSecrets().intercomToken;
 }
 
 export function getGithubSecrets() {
@@ -116,10 +93,6 @@ export function getGoogleSheetsClientSecret() {
   return loadSecrets()["google-sheets"]?.clientSecret;
 }
 
-export function getOpenaiApiKey() {
-  return loadSecrets().openaiApiKey;
-}
-
 export function getAnthropicApiKey() {
   return loadSecrets().anthropicApiKey;
 }
@@ -137,10 +110,6 @@ export function getDiscourseApiKey() {
 
 export function getVercelSecrets() {
   return ensure(loadSecrets().vercel, "Vercel secrets required");
-}
-
-export function getClickhouseSecrets() {
-  return loadSecrets().clickhouse;
 }
 
 export function getDynamoDbSecrets() {
