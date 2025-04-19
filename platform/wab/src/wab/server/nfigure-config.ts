@@ -87,7 +87,6 @@ export const AppConfigSchema = Type.Object({
     teamId: Type.String(),
     authBearerToken: Type.String(),
   }),
-  // ...add more as you migrate more usages...
 });
 
 export const appConfig = nfigure({
