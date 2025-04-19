@@ -1,5 +1,5 @@
 import { getUser, userDbMgr } from "@/wab/server/routes/util";
-import { getDiscourseConnectSecret } from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import { ensure, ensureString, notNil, omitNils } from "@/wab/shared/common";
 import { MIN_ACCESS_LEVEL_FOR_SUPPORT } from "@/wab/shared/discourse/config";
 import { accessLevelRank } from "@/wab/shared/EntUtil";
@@ -20,7 +20,7 @@ import L from "lodash";
  * the relevant support groups corresponding to their team/org memberships.
  */
 export async function discourseConnect(req: Request, res: Response) {
-  const secret = getDiscourseConnectSecret();
+  const secret = appConfig.discourse.discourseConnectSecret;
 
   // Parse the request payload from Discourse.
   const { sso: requestPayloadRaw, sig: requestSig } = req.query;

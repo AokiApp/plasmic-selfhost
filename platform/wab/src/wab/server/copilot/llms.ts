@@ -3,7 +3,6 @@
  */
 
 import { DbMgr } from "@/wab/server/db/DbMgr";
-import { getAnthropicApiKey, getDynamoDbSecrets } from "@/wab/server/secrets";
 import { appConfig } from "../nfigure-config";
 import { DynamoDbCache, SimpleCache } from "@/wab/server/simple-cache";
 import { last, mkShortId } from "@/wab/shared/common";
@@ -28,9 +27,9 @@ const openaiRaw = new OpenAIApi(
   })
 );
 
-const anthropicApiKey = getAnthropicApiKey();
+const anthropicApiKey = appConfig.anthropicApiKey;
 
-const dynamoDbCredentials = getDynamoDbSecrets();
+const dynamoDbCredentials = appConfig.dynamodb;
 
 const verbose = false;
 
