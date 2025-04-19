@@ -1,0 +1,40 @@
+name: Rebase main onto upstream-master
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - upstream-master
+
+jobs:
+  rebase-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: |
+          git fetch origin main
+          git fetch origin upstream-master
+
+      - name: Checkout main branch
+        run: git checkout main
+
+      - name: Rebase main onto upstream-master
+        run: |
+          git rebase origin/upstream-master
+
+      - name: Push rebased main (force-with-lease)
+        run: |
+          git push origin main --force-with-lease
+
+    # エラー時の通知や自動PR作成などは必要に応じて追加可能
