@@ -1,6 +1,8 @@
 name: Rebase main onto upstream-master
 
 on:
+  schedule:
+    - cron: '0 3 * * *' # 毎日午前2時(JST 11時)に実行
   workflow_dispatch:
   push:
     branches:
