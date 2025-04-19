@@ -3,11 +3,8 @@
  */
 
 import { DbMgr } from "@/wab/server/db/DbMgr";
-import {
-  getAnthropicApiKey,
-  getDynamoDbSecrets,
-  getOpenaiApiKey,
-} from "@/wab/server/secrets";
+import { getAnthropicApiKey, getDynamoDbSecrets } from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import { DynamoDbCache, SimpleCache } from "@/wab/server/simple-cache";
 import { last, mkShortId } from "@/wab/shared/common";
 import {
@@ -24,7 +21,7 @@ import { stringify } from "safe-stable-stringify";
 
 export const chatGptDefaultPrompt = `You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.`;
 
-const openaiApiKey = getOpenaiApiKey();
+const openaiApiKey = appConfig.openaiApiKey;
 
 const anthropicApiKey = getAnthropicApiKey();
 
