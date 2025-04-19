@@ -8,6 +8,7 @@ import { logError } from "@/wab/server/server-util";
 import { StudioRoomMessageTypes } from "@/wab/shared/ApiSchema";
 import { Request } from "express";
 import fetch from "node-fetch";
+import { appConfig } from "./nfigure-config";
 
 export async function disconnectUserSockets(req: Request) {
   const socketHost = getSocketHost();
@@ -93,10 +94,10 @@ export async function emitUserToken(
 }
 
 function getSocketHost() {
-  const socketHost = process.env["SOCKET_HOST"];
+  const socketHost = appConfig.socketHost;
   if (socketHost) {
     return socketHost;
   }
-  const backendPort = process.env["BACKEND_PORT"];
-  return `http://localhost:${backendPort || 3004}`;
+  const backendPort = appConfig.backendPort;
+  return `http://localhost:${backendPort}`;
 }

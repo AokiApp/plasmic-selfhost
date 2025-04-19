@@ -26,6 +26,7 @@ import {
 } from "@/wab/shared/model/classes";
 import { InvariantError } from "@/wab/shared/site-invariants";
 import semver from "semver";
+import { appConfig } from "../nfigure-config";
 
 export async function unbundleSite(
   bundler: Bundler,
@@ -55,7 +56,7 @@ export async function bundleHasStaleHostlessDeps(
   bundle: UnsafeBundle,
   db: MigrationDbMgr
 ) {
-  if (process.env["DEV_BUNDLE_MIGRATION"]) {
+  if (appConfig.devBundleMigration) {
     // For dev bundle migrations, we handle hostless upgrades specially
     return true;
   }
@@ -75,7 +76,7 @@ export async function upgradeHostlessProject(
   entity: PkgVersion | ProjectRevision,
   db: MigrationDbMgr
 ) {
-  if (process.env["DEV_BUNDLE_MIGRATION"]) {
+  if (appConfig.devBundleMigration) {
     // For dev bundle migrations, we handle hostless upgrades specially
     return upgradeHostlessProjectForDev(bundle, entity, db);
   }
