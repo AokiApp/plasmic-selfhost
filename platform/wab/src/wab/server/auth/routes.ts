@@ -60,6 +60,7 @@ import passport from "passport";
 import { AuthenticateOptionsGoogle } from "passport-google-oauth20";
 import { IVerifyOptions } from "passport-local";
 import util from "util";
+import { appConfig } from "../nfigure-config";
 
 export function csrf(req: Request, res: Response, _next: NextFunction) {
   res.json({ csrf: res.locals._csrf });
@@ -486,7 +487,7 @@ export async function sendEmailVerification(req: Request, res: Response) {
 }
 
 export async function getEmailVerificationToken(req: Request, res: Response) {
-  if (!process.env.ENABLED_GET_EMAIL_VERIFICATION_TOKEN) {
+  if (!appConfig.enabledGetEmailVerificationToken) {
     throw new UnauthorizedError("Unauthorized API request.");
   }
 
