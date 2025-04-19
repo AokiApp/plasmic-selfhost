@@ -23,6 +23,7 @@ import { addSocketRoutes } from "@/wab/server/app-socket-backend-real";
 import { Config } from "@/wab/server/config";
 import { sendCommentsNotificationEmails } from "@/wab/server/scripts/send-comments-notifications";
 import httpProxy from "http-proxy";
+import { appConfig } from "./nfigure-config";
 
 export async function runAppServer(config: Config) {
   await ensureDbConnections(config.databaseUri, {
@@ -30,9 +31,9 @@ export async function runAppServer(config: Config) {
   });
   await maybeMigrateDatabase();
 
-  console.log(`Starting up app server; NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`Starting up app server; NODE_ENV: ${appConfig.nodeEnv}`);
 
-  const socketHost = process.env["SOCKET_HOST"];
+  const socketHost = appConfig.socketHost;
 
   // We proxy websocket requests to the socket server
   const socketProxy = socketHost

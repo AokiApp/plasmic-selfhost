@@ -9,6 +9,7 @@ import {
   getConnectionManager,
   getConnectionOptions,
 } from "typeorm";
+import { appConfig } from "../nfigure-config";
 
 // Unused, just creating for the global side effect of having a connection
 // pool.  Contrary to the name, this actually sets up a pool of connections
@@ -43,7 +44,7 @@ export async function ensureDbConnection(
   console.log(`Creating typeorm connection pool for ${name}`);
   let connOpts: ConnectionOptions;
   if (typeof dburi === "string") {
-    const envPassword = process.env.WAB_DBPASSWORD;
+    const envPassword = appConfig.dbPassword;
     connOpts = Object.assign(
       {},
       await getConnectionOptions(),
@@ -53,7 +54,7 @@ export async function ensureDbConnection(
           // Set postgres pool size up from default of 10
           // https://node-postgres.com/api/pool
           max: maxConnections,
-          simple_query_mode: process.env.PG_SIMPLE_QUERY_MODE === "true",
+          simple_query_mode: appConfig.pgSimpleQueryMode,
         },
       },
       opts?.useEnvPassword && envPassword
