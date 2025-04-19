@@ -47,6 +47,46 @@ export const AppConfigSchema = Type.Object({
   }),
   intercomToken: Type.Optional(Type.String()),
   openaiApiKey: Type.Optional(Type.String()),
+
+  github: Type.Object({
+    appId: Type.Number(),
+    privateKey: Type.String(),
+    oauth: Type.Object({
+      clientId: Type.String(),
+      clientSecret: Type.String(),
+    }),
+  }),
+  discourse: Type.Object({
+    discourseConnectSecret: Type.String(),
+    apiKey: Type.String(),
+  }),
+  dynamodb: Type.Object({
+    accessKeyId: Type.String(),
+    secretAccessKey: Type.String(),
+  }),
+  anthropicApiKey: Type.String(),
+
+  google: Type.Object({
+    clientId: Type.String(),
+    clientSecret: Type.String(),
+  }),
+  airtableSso: Type.Object({
+    clientId: Type.String(),
+    clientSecret: Type.String(),
+  }),
+  googleSheets: Type.Object({
+    clientId: Type.String(),
+    clientSecret: Type.String(),
+  }),
+  stripe: Type.Object({
+    secretKey: Type.String(),
+  }),
+  vercel: Type.Object({
+    plasmicHostingSecret: Type.String(),
+    projectId: Type.String(),
+    teamId: Type.String(),
+    authBearerToken: Type.String(),
+  }),
   // ...add more as you migrate more usages...
 });
 
