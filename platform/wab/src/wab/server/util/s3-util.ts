@@ -1,6 +1,7 @@
 import { ensureInstance } from "@/wab/shared/common";
 import S3 from "aws-sdk/clients/s3";
 import path from "path";
+import { appConfig } from "./nfigure-config";
 
 export async function upsertS3CacheEntry<T>(opts: {
   bucket: string;
@@ -10,7 +11,7 @@ export async function upsertS3CacheEntry<T>(opts: {
   deserialize: (str: string) => T;
 }) {
   const { bucket, key, compute: f, serialize, deserialize } = opts;
-  const s3 = new S3({ endpoint: process.env.S3_ENDPOINT });
+  const s3 = new S3({ endpoint: appConfig.s3Endpoint });
 
   try {
     const obj = await s3
@@ -36,7 +37,7 @@ export async function upsertS3CacheEntry<T>(opts: {
         })
         .promise();
     } catch (e) {
-      if (process.env.NODE_ENV !== "development") {
+      if (appConfig.nodeEnv !== "development") {
         throw e;
       }
       console.error("Unable to add content to S3", e);
@@ -51,7 +52,7 @@ export async function uploadFilesToS3(opts: {
   files: Record<string, string>;
 }) {
   const { bucket, key, files } = opts;
-  const s3 = new S3({ endpoint: process.env.S3_ENDPOINT });
+  const s3 = new S3({ endpoint: appConfig.s3Endpoint });
   await Promise.all(
     Object.entries(files).map(async ([file, content]) => {
       await s3
