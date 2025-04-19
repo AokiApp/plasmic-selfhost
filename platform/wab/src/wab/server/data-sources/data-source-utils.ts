@@ -9,7 +9,7 @@ import { makeTutorialDbFetcher } from "@/wab/server/data-sources/tutorialdb-fetc
 import { makeZapierFetcher } from "@/wab/server/data-sources/zapier-fetcher";
 import { getLastBundleVersion } from "@/wab/server/db/BundleMigrator";
 import { DbMgr } from "@/wab/server/db/DbMgr";
-import { getOpEncryptionKey as getDataSourceOperationEncryptionKey } from "@/wab/server/secrets";
+import { appConfig } from "@/wab/server/nfigure-config";
 import { makeStableEncryptor } from "@/wab/server/util/crypt";
 import { ProjectId } from "@/wab/shared/ApiSchema";
 import { FastBundler } from "@/wab/shared/bundler";
@@ -272,7 +272,9 @@ export const parameterSubstituteDynamicValues = (
   return { value: finalBinding, parameters };
 };
 
-const encryptor = makeStableEncryptor(getDataSourceOperationEncryptionKey());
+const encryptor = makeStableEncryptor(
+  appConfig.dataSourceOperationEncryptionKey
+);
 export async function makeDataSourceOperationId(
   mgr: DbMgr,
   dataSourceId: string,

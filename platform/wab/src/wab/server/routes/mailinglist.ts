@@ -1,11 +1,11 @@
 import { isValidEmail } from "@/wab/shared/common";
-import { getIntercomToken } from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import { BadRequestError } from "@/wab/shared/ApiErrors/errors";
 import axios from "axios";
 import { Request, Response } from "express-serve-static-core";
 
 async function addUser(email: string) {
-  const intercomToken = getIntercomToken();
+  const intercomToken = appConfig.intercomToken;
   const resp = await axios({
     method: "post",
     url: `https://api.intercom.io/contacts/`,

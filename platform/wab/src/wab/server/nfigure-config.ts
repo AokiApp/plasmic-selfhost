@@ -37,6 +37,16 @@ export const AppConfigSchema = Type.Object({
   mailFrom: Type.String({ default: "Plasmic <team@example.com>" }),
   mailUserOps: Type.String({ default: "ops@example.com" }),
   mailBcc: Type.Optional(Type.String()),
+
+  // === Migrated from secrets.ts ===
+  encryptionKey: Type.String(),
+  dataSourceOperationEncryptionKey: Type.String(),
+  smtpAuth: Type.Object({
+    user: Type.String(),
+    pass: Type.String(),
+  }),
+  intercomToken: Type.Optional(Type.String()),
+  openaiApiKey: Type.Optional(Type.String()),
   // ...add more as you migrate more usages...
 });
 
