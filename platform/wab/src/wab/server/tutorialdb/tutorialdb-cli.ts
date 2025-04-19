@@ -8,12 +8,12 @@ import {
 } from "@/wab/server/tutorialdb/tutorialdb-utils";
 import { Command } from "commander";
 import { TutorialDbId } from "@/wab/shared/ApiSchema";
+import { appConfig } from "../nfigure-config";
 
 async function main() {
   const withDb = async (opts: any, func: (db: DbMgr) => Promise<void>) => {
-    if (opts.tdbhost) {
-      process.env["TUTORIAL_DB_HOST"] = opts.tdbhost;
-    }
+    // process.env["TUTORIAL_DB_HOST"] = opts.tdbhost; // deprecated
+    // Use appConfig.tutorialDbHost for new code
     const con = await createDbConnection(opts.dburi);
     await con.transaction(async (em) => {
       const db = new DbMgr(em, SUPER_USER);

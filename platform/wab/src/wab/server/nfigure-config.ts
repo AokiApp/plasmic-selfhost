@@ -17,6 +17,9 @@ export const AppConfigSchema = Type.Object({
   pgSimpleQueryMode: Type.Optional(Type.Boolean()),
   ci: Type.Optional(Type.Boolean()),
   siteAssetsBucket: Type.String(),
+  tutorialDbHost: Type.Optional(Type.String()),
+  amplitudeApiKey: Type.Optional(Type.String()),
+  siteAssetsBaseUrl: Type.Optional(Type.String()),
   // ...add more as you migrate more usages...
 });
 
