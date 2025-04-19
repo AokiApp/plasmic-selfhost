@@ -24,6 +24,12 @@ export const AppConfigSchema = Type.Object({
   enabledGetEmailVerificationToken: Type.Optional(Type.Boolean()),
   secretsFile: Type.Optional(Type.String()),
   backendPort: Type.Number({ default: 3004 }),
+  loaderAssetsBucket: Type.String({ default: "plasmic-loader-assets-dev" }),
+  socketPort: Type.Number({ default: 3020 }),
+  tutorialDbSuperPassword: Type.Optional(Type.String()),
+  wabDbName: Type.String({ default: "wab" }),
+  disableBwrap: Type.Boolean({ default: false }),
+  bwrapArgs: Type.Optional(Type.String()),
   // ...add more as you migrate more usages...
 });
 
