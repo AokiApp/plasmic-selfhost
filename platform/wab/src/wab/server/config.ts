@@ -33,18 +33,5 @@ export const loadConfig = (): Config => {
     port: appConfig.backendPort,
   };
 
-  // Runtime validation for required fields in production
-  if (config.production) {
-    if (!config.sessionSecret) {
-      throw new Error("Production missing Session Secret");
-    }
-    if (!config.databaseUri) {
-      throw new Error("Production missing DB Uri");
-    }
-    if (!config.host) {
-      throw new Error("Production missing Host");
-    }
-  }
-
   return config;
 };
