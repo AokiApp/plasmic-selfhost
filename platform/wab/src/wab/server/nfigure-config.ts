@@ -4,7 +4,7 @@ import { typeboxValidator } from "@kintaman-co/nfigure-typebox";
 
 export const AppConfigSchema = Type.Object({
   nodeEnv: Type.String({ default: "development" }),
-  socketHost: Type.String({ default: "http://localhost:3004" }),
+  socketHost: Type.Optional(Type.String({ default: "http://localhost:3004" })),
   dbPassword: Type.Optional(Type.String()),
   s3Endpoint: Type.Optional(Type.String()),
   clickhouse: Type.Object({
@@ -34,17 +34,36 @@ export const AppConfigSchema = Type.Object({
   databaseUri: Type.Optional(Type.String()),
   sentryDSN: Type.Optional(Type.String()),
   sessionSecret: Type.String({ default: "x" }),
-  mailFrom: Type.String({ default: "Plasmic <team@example.com>" }),
-  mailUserOps: Type.String({ default: "ops@example.com" }),
-  mailBcc: Type.Optional(Type.String()),
+  mail: Type.Object({
+    from: Type.String({ default: "Plasmic <team@example.com>" }),
+    userOps: Type.String({ default: "ops@example.com" }),
+    bcc: Type.Optional(Type.String()),
+  }),
 
   // === Migrated from secrets.ts ===
   encryptionKey: Type.String(),
   dataSourceOperationEncryptionKey: Type.String(),
-  smtpAuth: Type.Object({
-    user: Type.String(),
-    pass: Type.String(),
-  }),
+  smtpTransportOption: Type.Object(
+    {
+      // popular properties of nodemailer.SMTPConnection.Options
+      host: Type.Optional(Type.String()),
+      port: Type.Optional(Type.Number()),
+      auth: Type.Optional(
+        Type.Object(
+          {
+            user: Type.String(),
+            pass: Type.String(),
+          },
+          {
+            additionalProperties: true, // allow other properties listed in SMTPTransport.AuthenticationType
+          }
+        )
+      ),
+    },
+    {
+      additionalProperties: true, // allow other properties listed in SMTPTransport.Options
+    }
+  ),
   intercomToken: Type.Optional(Type.String()),
   openaiApiKey: Type.Optional(Type.String()),
 

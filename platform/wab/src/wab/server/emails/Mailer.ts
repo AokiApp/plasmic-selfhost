@@ -31,13 +31,7 @@ class ConsoleMailer implements Mailer {
 
 export function createMailer() {
   if (appConfig.nodeEnv === "production") {
-    return new NodeMailer(
-      createTransport({
-        host: "email-smtp.us-west-2.amazonaws.com",
-        port: 587,
-        auth: appConfig.smtpAuth,
-      })
-    );
+    return new NodeMailer(createTransport(appConfig.smtpTransportOption));
   } else {
     return new ConsoleMailer();
   }
