@@ -3,11 +3,7 @@
  */
 
 import { DbMgr } from "@/wab/server/db/DbMgr";
-import {
-  getAnthropicApiKey,
-  getDynamoDbSecrets,
-  getOpenaiApiKey,
-} from "@/wab/server/secrets";
+import { appConfig } from "../nfigure-config";
 import { DynamoDbCache, SimpleCache } from "@/wab/server/simple-cache";
 import { last, mkShortId } from "@/wab/shared/common";
 import { showCompletionRequest } from "@/wab/shared/copilot/prompt-utils";
@@ -24,16 +20,16 @@ import { stringify } from "safe-stable-stringify";
 
 export const chatGptDefaultPrompt = `You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.`;
 
-const openaiApiKey = getOpenaiApiKey();
+const openaiApiKey = appConfig.openaiApiKey;
 const openaiRaw = new OpenAIApi(
   new Configuration({
     apiKey: openaiApiKey,
   })
 );
 
-const anthropicApiKey = getAnthropicApiKey();
+const anthropicApiKey = appConfig.anthropicApiKey;
 
-const dynamoDbCredentials = getDynamoDbSecrets();
+const dynamoDbCredentials = appConfig.dynamodb;
 
 const verbose = false;
 

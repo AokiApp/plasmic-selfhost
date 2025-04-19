@@ -60,6 +60,7 @@ import passport from "passport";
 import { AuthenticateOptionsGoogle } from "passport-google-oauth20";
 import { IVerifyOptions } from "passport-local";
 import util from "util";
+import { appConfig } from "../nfigure-config";
 
 export function csrf(req: Request, res: Response, _next: NextFunction) {
   res.json({ csrf: res.locals._csrf });
@@ -486,7 +487,7 @@ export async function sendEmailVerification(req: Request, res: Response) {
 }
 
 export async function getEmailVerificationToken(req: Request, res: Response) {
-  if (!process.env.ENABLED_GET_EMAIL_VERIFICATION_TOKEN) {
+  if (!appConfig.enabledGetEmailVerificationToken) {
     throw new UnauthorizedError("Unauthorized API request.");
   }
 
@@ -756,7 +757,7 @@ export async function authApiTokenMiddleware(
   const email = req.headers["x-plasmic-api-user"];
   const token = req.headers["x-plasmic-api-token"];
 
-  if (process.env.NODE_ENV !== "production") {
+  if (appConfig.nodeEnv !== "production") {
     // If we're not in production we allow logging using password instead of
     // user token. That is used for tests (e.g. loader-tests).
     const password = req.headers["x-plasmic-api-password"];

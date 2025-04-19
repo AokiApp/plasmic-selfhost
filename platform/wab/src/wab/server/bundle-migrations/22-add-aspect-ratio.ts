@@ -11,8 +11,9 @@ import {
   SVG_MEDIA_TYPE,
 } from "@/wab/shared/data-urls";
 import S3 from "aws-sdk/clients/s3";
+import { appConfig } from "../nfigure-config";
 
-const siteAssetsBucket = process.env.SITE_ASSETS_BUCKET as string;
+const siteAssetsBucket = appConfig.siteAssetsBucket;
 
 export const migrate: BundledMigrationFn = async (bundle) => {
   for (const inst of Object.values(bundle.map)) {
@@ -27,7 +28,7 @@ export const migrate: BundledMigrationFn = async (bundle) => {
       ) {
         const storagePath = new URL(url).pathname.replace(/^\//, "");
         const res = await new S3({
-          endpoint: process.env.S3_ENDPOINT,
+          endpoint: appConfig.s3Endpoint,
         })
           .getObject({
             Bucket: siteAssetsBucket,

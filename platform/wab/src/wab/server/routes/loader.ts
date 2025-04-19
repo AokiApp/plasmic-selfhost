@@ -46,6 +46,7 @@ import { Request, Response } from "express-serve-static-core";
 import fs from "fs";
 import { isString } from "lodash";
 import path from "path";
+import { appConfig } from "../nfigure-config";
 
 /**
  * Loader version is used for backwards compatibility (otherwise we could
@@ -411,7 +412,7 @@ export async function getLoaderChunk(req: Request, res: Response) {
 
   console.log(`Loading S3 bundle from ${LOADER_ASSETS_BUCKET} ${bundleKey}`);
 
-  const s3 = new S3({ endpoint: process.env.S3_ENDPOINT });
+  const s3 = new S3({ endpoint: appConfig.s3Endpoint });
 
   const obj = await s3
     .getObject({
@@ -582,23 +583,22 @@ export async function genLoaderHtmlBundleSandboxed(
   args: Parameters<typeof genLoaderHtmlBundle>[0]
 ) {
   const cmd = `node -r esbuild-register src/wab/server/loader/gen-html-bundle.ts`;
-  const { stdout, stderr, exitCode } =
-    process.env.DISABLE_BWRAP === "1"
-      ? await execa(
-          "node",
-          [...cmd.split(/\s+/g).slice(1), JSON.stringify(args)],
-          { reject: false }
-        )
-      : await execa(
-          `bwrap`,
-          [
-            ...`--clearenv --setenv CODEGEN_HOST ${getCodegenUrl()} --unshare-user --unshare-pid --unshare-ipc --unshare-uts --unshare-cgroup --ro-bind /lib /lib --ro-bind /usr /usr --ro-bind /etc /etc --ro-bind /run /run ${
-              process.env.BWRAP_ARGS || ""
-            } --chdir ${process.cwd()} ${cmd}`.split(/\s+/g),
-            JSON.stringify(args),
-          ],
-          { reject: false }
-        );
+  const { stdout, stderr, exitCode } = appConfig.disableBwrap
+    ? await execa(
+        "node",
+        [...cmd.split(/\s+/g).slice(1), JSON.stringify(args)],
+        { reject: false }
+      )
+    : await execa(
+        `bwrap`,
+        [
+          ...`--clearenv --setenv CODEGEN_HOST ${getCodegenUrl()} --unshare-user --unshare-pid --unshare-ipc --unshare-uts --unshare-cgroup --ro-bind /lib /lib --ro-bind /usr /usr --ro-bind /etc /etc --ro-bind /run /run ${
+            appConfig.bwrapArgs || ""
+          } --chdir ${process.cwd()} ${cmd}`.split(/\s+/g),
+          JSON.stringify(args),
+        ],
+        { reject: false }
+      );
   if (stderr.trim().length > 0 && exitCode === 0) {
     console.error(
       `Sandboxed loader subprocess succeeded with exit code 0 but got unexpected stderr:\n` +

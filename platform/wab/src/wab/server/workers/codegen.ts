@@ -53,6 +53,7 @@ import { Site } from "@/wab/shared/model/classes";
 import S3 from "aws-sdk/clients/s3";
 import fs from "fs";
 import { ConnectionOptions } from "typeorm";
+import { appConfig } from "../nfigure-config";
 
 export interface CodegenOutputBundle {
   components: ComponentExportOutput[];
@@ -477,7 +478,7 @@ async function ensureImageAssetsOnS3(site: Site) {
   );
 }
 
-const siteAssetsBucket = process.env.SITE_ASSETS_BUCKET as string;
+const siteAssetsBucket = appConfig.siteAssetsBucket;
 /**
  * Converts ImageAsset.uri from s3 link to data:, MUTATING the data object!
  * Includes all referenced ImageAssets from site -- INCLUDING imported ones!
@@ -494,7 +495,7 @@ async function fetchImageAssetsFromS3(site: Site) {
         return;
       }
       const storagePath = new URL(i.dataUri).pathname.replace(/^\//, "");
-      const res = await new S3({ endpoint: process.env.S3_ENDPOINT })
+      const res = await new S3({ endpoint: appConfig.s3Endpoint })
         .getObject({
           Bucket: siteAssetsBucket,
           Key: storagePath,
