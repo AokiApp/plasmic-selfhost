@@ -65,57 +65,6 @@ interface Secrets {
   };
 }
 
-export function getGoogleClientId() {
-  return loadSecrets().google?.clientId ?? "fake";
-}
-
-export function getGoogleClientSecret() {
-  return loadSecrets().google?.clientSecret ?? "fake";
-}
-
-export function getGithubSecrets() {
-  return loadSecrets().github;
-}
-
-export function getStripeSecrets() {
-  return loadSecrets().stripe;
-}
-
-export function getAirtableSsoSecrets() {
-  return loadSecrets().airtableSso;
-}
-
-export function getGoogleSheetsClientId() {
-  return loadSecrets()["google-sheets"]?.clientId;
-}
-
-export function getGoogleSheetsClientSecret() {
-  return loadSecrets()["google-sheets"]?.clientSecret;
-}
-
-export function getAnthropicApiKey() {
-  return loadSecrets().anthropicApiKey;
-}
-
-export function getDiscourseConnectSecret() {
-  return ensure(
-    loadSecrets().discourse?.discourseConnectSecret,
-    "DiscourseConnect secret required"
-  );
-}
-
-export function getDiscourseApiKey() {
-  return ensure(loadSecrets().discourse?.apiKey, "Discourse API key required");
-}
-
-export function getVercelSecrets() {
-  return ensure(loadSecrets().vercel, "Vercel secrets required");
-}
-
-export function getDynamoDbSecrets() {
-  return loadSecrets().dynamodb;
-}
-
 export function loadSecrets(): Secrets {
   const path = getSecretsFile();
   if (!fs.existsSync(path)) {
