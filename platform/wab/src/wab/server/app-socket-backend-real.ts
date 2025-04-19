@@ -29,6 +29,7 @@ import { json as bodyParserJson } from "body-parser";
 import express, { Request } from "express";
 import promMetrics from "express-prom-bundle";
 import http from "http";
+import { appConfig } from "./nfigure-config";
 
 export interface BroadcastPayload {
   // Null room means broadcast to all rooms
@@ -46,7 +47,7 @@ async function run() {
   await maybeMigrateDatabase();
 
   const app = express();
-  app.set("port", process.env["SOCKET_PORT"]);
+  app.set("port", appConfig.socketPort);
   app.set("name", "socket-server");
 
   addLoggingMiddleware(app);

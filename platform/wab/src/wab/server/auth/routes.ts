@@ -757,7 +757,7 @@ export async function authApiTokenMiddleware(
   const email = req.headers["x-plasmic-api-user"];
   const token = req.headers["x-plasmic-api-token"];
 
-  if (process.env.NODE_ENV !== "production") {
+  if (appConfig.nodeEnv !== "production") {
     // If we're not in production we allow logging using password instead of
     // user token. That is used for tests (e.g. loader-tests).
     const password = req.headers["x-plasmic-api-password"];

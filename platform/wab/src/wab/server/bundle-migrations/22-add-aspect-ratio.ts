@@ -28,7 +28,7 @@ export const migrate: BundledMigrationFn = async (bundle) => {
       ) {
         const storagePath = new URL(url).pathname.replace(/^\//, "");
         const res = await new S3({
-          endpoint: process.env.S3_ENDPOINT,
+          endpoint: appConfig.s3Endpoint,
         })
           .getObject({
             Bucket: siteAssetsBucket,

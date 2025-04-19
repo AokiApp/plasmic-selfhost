@@ -8,6 +8,7 @@ import {
 import { User } from "@/wab/server/entities/Entities";
 import "@/wab/server/extensions";
 import { asyncTimed, callsToServerTiming } from "@/wab/server/timing-util";
+import { appConfig } from "../nfigure-config";
 import {
   BadRequestError,
   ForbiddenError,
@@ -205,7 +206,7 @@ export function adminOrDevelopmentEnvOnly(
   res: Response,
   next: NextFunction
 ) {
-  if (process.env.NODE_ENV !== "production") {
+  if (appConfig.nodeEnv !== "production") {
     next();
   } else {
     adminOnly(req, res, next);

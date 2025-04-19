@@ -15,6 +15,7 @@ import { tuple } from "@/wab/shared/common";
 import { LocalizationKeyScheme } from "@/wab/shared/localization";
 import { createHash } from "crypto";
 import { getConnection } from "typeorm";
+import { appConfig } from "../nfigure-config";
 
 /**
  * This is used for busting codegen caches.  You should increment this number if
@@ -45,8 +46,7 @@ export const LOADER_CACHE_BUST = "19";
  */
 export const LATEST_LOADER_VERSION = 10;
 
-export const LOADER_ASSETS_BUCKET =
-  process.env.LOADER_ASSETS_BUCKET ?? "plasmic-loader-assets-dev";
+export const LOADER_ASSETS_BUCKET = appConfig.loaderAssetsBucket;
 
 export async function genPublishedLoaderCodeBundle(
   dbMgr: DbMgr,
