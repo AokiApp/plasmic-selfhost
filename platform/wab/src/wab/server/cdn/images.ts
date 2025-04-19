@@ -10,7 +10,7 @@ import { failableAsync } from "ts-failable";
 import { appConfig } from "../nfigure-config";
 
 const siteAssetsBucket = appConfig.siteAssetsBucket;
-const siteAssetsBaseUrl = process.env.SITE_ASSETS_BASE_URL as string;
+const siteAssetsBaseUrl = appConfig.siteAssetsBaseUrl;
 
 async function getFileType(buffer: Buffer | ArrayBuffer) {
   let fileType = await FileType.fromBuffer(buffer);
@@ -71,14 +71,14 @@ export async function uploadFileToS3(
 
       try {
         const { Location } = await new S3({
-          endpoint: process.env.S3_ENDPOINT,
+          endpoint: appConfig.s3Endpoint,
         })
           .upload({
             Bucket: siteAssetsBucket,
             Key: storagePath,
             Body: optimizedBuffer,
             ContentType: mime,
-            ACL: !process.env.S3_ENDPOINT ? "public-read" : undefined, // TODO: Remove this when we migrate to GCS,
+            ACL: !appConfig.s3Endpoint ? "public-read" : undefined, // TODO: Remove this when we migrate to GCS,
             CacheControl: `max-age=3600, s-maxage=31536000`,
           })
           .promise();
