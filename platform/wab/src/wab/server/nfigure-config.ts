@@ -4,7 +4,7 @@ import { typeboxValidator } from "@kintaman-co/nfigure-typebox";
 
 export const AppConfigSchema = Type.Object({
   nodeEnv: Type.String({ default: "development" }),
-  socketHost: Type.Optional(Type.String()),
+  socketHost: Type.String({ default: "http://localhost:3004" }),
   dbPassword: Type.Optional(Type.String()),
   s3Endpoint: Type.Optional(Type.String()),
   clickhouse: Type.Optional(
@@ -16,10 +16,14 @@ export const AppConfigSchema = Type.Object({
   ),
   pgSimpleQueryMode: Type.Optional(Type.Boolean()),
   ci: Type.Optional(Type.Boolean()),
-  siteAssetsBucket: Type.String(),
+  siteAssetsBucket: Type.String({ default: "plasmic-assets" }),
   tutorialDbHost: Type.Optional(Type.String()),
   amplitudeApiKey: Type.Optional(Type.String()),
   siteAssetsBaseUrl: Type.Optional(Type.String()),
+  devBundleMigration: Type.Optional(Type.Boolean()),
+  enabledGetEmailVerificationToken: Type.Optional(Type.Boolean()),
+  secretsFile: Type.Optional(Type.String()),
+  backendPort: Type.Number({ default: 3004 }),
   // ...add more as you migrate more usages...
 });
 
