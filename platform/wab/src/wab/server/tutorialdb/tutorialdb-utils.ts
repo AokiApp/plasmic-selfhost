@@ -136,7 +136,7 @@ export async function getSuperTutorialDbConnection(opts?: {
   const host = getTutorialDbHost();
   // if TUTORIAL_DB_SUPER_PASSWORD is absent, will just fallback
   // to ~/.pgpass
-  const password = process.env.TUTORIAL_DB_SUPER_PASSSWORD;
+  const password = appConfig.tutorialDbSuperPassword;
   const connName = `super-tutorialdb-${
     database ?? "postgres"
   }-${mkShortUuid()}`;

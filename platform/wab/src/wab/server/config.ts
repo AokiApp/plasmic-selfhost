@@ -1,6 +1,7 @@
 import { assert } from "@/wab/shared/common";
 import { getPublicUrl } from "@/wab/shared/urls";
 import memoizeOne from "memoize-one";
+import { appConfig } from "./nfigure-config";
 
 export interface Config {
   host: string;
@@ -16,7 +17,7 @@ export interface Config {
 }
 
 export const DEFAULT_DATABASE_URI =
-  "postgresql://wab@localhost/" + (process.env.WAB_DBNAME || "wab");
+  "postgresql://wab@localhost/" + appConfig.wabDbName;
 
 const DEFAULT_CONFIG: Config = {
   host: getPublicUrl(),
@@ -24,9 +25,9 @@ const DEFAULT_CONFIG: Config = {
   sessionSecret: "x",
   mailFrom: "Plasmic <team@example.com>",
   mailUserOps: "ops@example.com",
-  production: process.env.NODE_ENV === "production",
+  production: appConfig.nodeEnv === "production",
   adminEmails:
-    process.env.NODE_ENV !== "production" ? ["admin@admin.example.com"] : [],
+    appConfig.nodeEnv !== "production" ? ["admin@admin.example.com"] : [],
 };
 
 export const loadConfig = memoizeOne((): Config => {

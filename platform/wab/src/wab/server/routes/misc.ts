@@ -4,6 +4,7 @@ import { GetClipResponse } from "@/wab/shared/ApiSchema";
 import { ensureInstance, ensureType } from "@/wab/shared/common";
 import S3 from "aws-sdk/clients/s3";
 import { Request, Response } from "express-serve-static-core";
+import { appConfig } from "../nfigure-config";
 
 export async function getAppConfig(req: Request, res: Response) {
   const config = req.devflags;
@@ -25,7 +26,7 @@ export async function putClip(req: Request, res: Response) {
 
 export async function getClip(req: Request, res: Response) {
   const { clipId } = req.params;
-  const s3 = new S3({ endpoint: process.env.S3_ENDPOINT });
+  const s3 = new S3({ endpoint: appConfig.s3Endpoint });
   const result = await s3
     .getObject({
       Bucket: "plasmic-clips",
