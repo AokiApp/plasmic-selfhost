@@ -1,13 +1,17 @@
-import { getClickhouseSecrets } from "@/wab/server/secrets";
 import { createClient } from "@clickhouse/client";
+import { appConfig } from "./nfigure-config";
 
 export const getClickHouseConnection = () => {
-  const config = getClickhouseSecrets();
+  const clickhouseConfig = appConfig.clickhouse ?? {
+    user: "admin",
+    pass: "",
+    db: "posthog",
+  };
   const client = createClient({
-    host: config?.host ?? "http://clickhouse-db.plasmic.app",
-    username: config?.username ?? process.env.CLICKHOUSE_USER ?? "admin",
-    password: config?.password ?? process.env.CLICKHOUSE_PASS ?? "",
-    database: config?.database ?? process.env.CLICKHOUSE_DB ?? "posthog",
+    host: "http://clickhouse-db.plasmic.app",
+    username: clickhouseConfig.user,
+    password: clickhouseConfig.pass,
+    database: clickhouseConfig.db,
   });
   return client;
 };
