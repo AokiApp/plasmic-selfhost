@@ -7,13 +7,12 @@ export const AppConfigSchema = Type.Object({
   socketHost: Type.String({ default: "http://localhost:3004" }),
   dbPassword: Type.Optional(Type.String()),
   s3Endpoint: Type.Optional(Type.String()),
-  clickhouse: Type.Optional(
-    Type.Object({
-      user: Type.String({ default: "admin" }),
-      pass: Type.String({ default: "" }),
-      db: Type.String({ default: "posthog" }),
-    })
-  ),
+  clickhouse: Type.Object({
+    host: Type.String({ default: "http://clickhouse-db.plasmic.app" }),
+    username: Type.String({ default: "admin" }),
+    password: Type.String({ default: "" }),
+    database: Type.String({ default: "posthog" }),
+  }),
   pgSimpleQueryMode: Type.Optional(Type.Boolean()),
   ci: Type.Optional(Type.Boolean()),
   siteAssetsBucket: Type.String({ default: "plasmic-assets" }),
