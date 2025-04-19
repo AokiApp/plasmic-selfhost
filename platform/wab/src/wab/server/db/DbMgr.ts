@@ -258,6 +258,7 @@ import {
 } from "@/wab/shared/site-diffs/merge-core";
 import * as Sentry from "@sentry/node";
 import bcrypt from "bcrypt";
+import { appConfig } from "../nfigure-config";
 import crypto from "crypto";
 import fs from "fs";
 import { pwnedPassword } from "hibp";
@@ -574,7 +575,7 @@ export const DEFAULT_DEV_PASSWORD = "!53kr3tz!";
 
 export async function checkWeakPassword(password: string | undefined) {
   if (
-    process.env.NODE_ENV !== "production" &&
+    appConfig.nodeEnv !== "production" &&
     password === DEFAULT_DEV_PASSWORD
   ) {
     return;

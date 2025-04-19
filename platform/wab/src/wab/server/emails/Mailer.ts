@@ -2,6 +2,7 @@ import { verifyEmailHtml } from "@/wab/server/emails/email-html";
 import { getSmtpAuth } from "@/wab/server/secrets";
 import { createTransport, SentMessageInfo, Transporter } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
+import { appConfig } from "../nfigure-config";
 
 export interface Mailer {
   sendMail(mailOptions: Mail.Options): Promise<SentMessageInfo>;
@@ -30,7 +31,7 @@ class ConsoleMailer implements Mailer {
 }
 
 export function createMailer() {
-  if (process.env.NODE_ENV === "production") {
+  if (appConfig.nodeEnv === "production") {
     return new NodeMailer(
       createTransport({
         host: "email-smtp.us-west-2.amazonaws.com",

@@ -3486,6 +3486,16 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
+"@kintaman-co/nfigure-typebox@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@kintaman-co/nfigure-typebox/-/nfigure-typebox-0.1.6.tgz#7860f42d08acd983cc2a7a99d8fa7fb83d83f2b8"
+  integrity sha512-O/gkIrJ8eaKMsiQHXOeByskDh6zI1TpjL9cEkVTv6QP2rQ/QgjAhB9ZjefjOIoopN5U5rqgeAUdlPnFvg8Tw9g==
+
+"@kintaman-co/nfigure@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@kintaman-co/nfigure/-/nfigure-0.1.6.tgz#b2c2980e89f6931dd135b9cf4f9bd6a4307c024e"
+  integrity sha512-mnSvhFDIq/vLsBv34BUNwgtHJAmCSb3HoZl4BXcdPEkFdQ2rpxfmAdxGhdtkgXwJrpDNdNVoxW083KfIXAYReA==
+
 "@ljharb/through@^2.3.9":
   version "2.3.9"
   resolved "https://registry.yarnpkg.com/@ljharb/through/-/through-2.3.9.tgz#85f221eb82f9d555e180e87d6e50fb154af85408"
@@ -6484,6 +6494,11 @@
   version "0.27.8"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
+
+"@sinclair/typebox@^0.34.33":
+  version "0.34.33"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.34.33.tgz#10ab3f1261ed9e754660250fad3e69cca1fa44b2"
+  integrity sha512-5HAV9exOMcXRUxo+9iYB5n09XxzCXnfy4VTNW4xnDv+FgjzAGY989C28BIdljKqmF+ZltUwujE3aossvcVtq6g==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"
