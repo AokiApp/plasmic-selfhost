@@ -10,6 +10,7 @@
 import { ensure, uncheckedCast } from "@/wab/shared/common";
 import fs from "fs";
 import * as os from "os";
+import { appConfig } from "./nfigure-config";
 
 interface Secrets {
   google?: {
@@ -157,7 +158,5 @@ export function loadSecrets(): Secrets {
 }
 
 function getSecretsFile() {
-  return (
-    process.env.PLASMIC_SECRETS_FILE || `${os.homedir()}/.plasmic/secrets.json`
-  );
+  return appConfig.secretsFile || `${os.homedir()}/.plasmic/secrets.json`;
 }
