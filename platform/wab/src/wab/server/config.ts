@@ -27,9 +27,9 @@ export const loadConfig = (): Config => {
     adminEmails: appConfig.adminEmails,
     sentryDSN: appConfig.sentryDSN,
     sessionSecret: appConfig.sessionSecret,
-    mailFrom: appConfig.mailFrom,
-    mailUserOps: appConfig.mailUserOps,
-    mailBcc: appConfig.mailBcc,
+    mailFrom: appConfig.mail.from,
+    mailUserOps: appConfig.mail.userOps,
+    mailBcc: appConfig.mail.bcc,
     port: appConfig.backendPort,
   };
 
