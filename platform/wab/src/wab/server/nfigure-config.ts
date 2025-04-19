@@ -14,7 +14,6 @@ export const AppConfigSchema = Type.Object({
     database: Type.String({ default: "posthog" }),
   }),
   pgSimpleQueryMode: Type.Optional(Type.Boolean()),
-  ci: Type.Optional(Type.Boolean()),
   siteAssetsBucket: Type.String({ default: "plasmic-assets" }),
   tutorialDbHost: Type.Optional(Type.String()),
   amplitudeApiKey: Type.Optional(Type.String()),
