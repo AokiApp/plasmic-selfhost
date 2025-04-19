@@ -1,7 +1,7 @@
 import { ensureInstance } from "@/wab/shared/common";
 import S3 from "aws-sdk/clients/s3";
 import path from "path";
-import { appConfig } from "./nfigure-config";
+import { appConfig } from "../nfigure-config";
 
 export async function upsertS3CacheEntry<T>(opts: {
   bucket: string;
