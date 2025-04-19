@@ -30,6 +30,15 @@ export const AppConfigSchema = Type.Object({
   wabDbName: Type.String({ default: "wab" }),
   disableBwrap: Type.Boolean({ default: false }),
   bwrapArgs: Type.Optional(Type.String()),
+  adminEmails: Type.Array(Type.String(), {
+    default: ["admin@admin.example.com"],
+  }),
+  databaseUri: Type.Optional(Type.String()),
+  sentryDSN: Type.Optional(Type.String()),
+  sessionSecret: Type.String({ default: "x" }),
+  mailFrom: Type.String({ default: "Plasmic <team@example.com>" }),
+  mailUserOps: Type.String({ default: "ops@example.com" }),
+  mailBcc: Type.Optional(Type.String()),
   // ...add more as you migrate more usages...
 });
 
