@@ -1,0 +1,32 @@
+name: Sync upstream-master with upstream/master
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 毎日午前2時(JST 11時)に実行
+  workflow_dispatch:
+
+jobs:
+  sync-upstream-master:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/plasmicapp/plasmic.git || true
+          git fetch upstream master
+
+      - name: Checkout upstream-master branch
+        run: git checkout upstream-master
+
+      - name: Fast-forward merge upstream/master into upstream-master
+        run: |
+          git merge --ff-only upstream/master || echo "No fast-forward possible"
+
+      - name: Push updated upstream-master
+        run: |
+          git push origin upstream-master
