@@ -8,6 +8,7 @@ import express, { ErrorRequestHandler, RequestHandler } from "express";
 import "express-async-errors";
 import promMetrics from "express-prom-bundle";
 import { rateLimit } from "express-rate-limit";
+import { appConfig } from "./nfigure-config";
 import { NextFunction, Request, Response } from "express-serve-static-core";
 import session from "express-session";
 import * as lusca from "lusca";
@@ -2058,7 +2059,7 @@ export async function createApp(
 ): Promise<{ app: express.Application }> {
   const app = express();
 
-  app.set("port", config.port || process.env.BACKEND_PORT || 3004);
+  app.set("port", config.port || appConfig.backendPort);
   app.set("name", name);
 
   await getConnection().transaction(async (entMgr) => {
