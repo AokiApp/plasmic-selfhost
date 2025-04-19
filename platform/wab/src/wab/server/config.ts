@@ -1,6 +1,4 @@
-import { assert } from "@/wab/shared/common";
 import { getPublicUrl } from "@/wab/shared/urls";
-import memoizeOne from "memoize-one";
 import { appConfig } from "./nfigure-config";
 
 export interface Config {
@@ -19,56 +17,34 @@ export interface Config {
 export const DEFAULT_DATABASE_URI =
   "postgresql://wab@localhost/" + appConfig.wabDbName;
 
-const DEFAULT_CONFIG: Config = {
-  host: getPublicUrl(),
-  databaseUri: DEFAULT_DATABASE_URI,
-  sessionSecret: "x",
-  mailFrom: "Plasmic <team@example.com>",
-  mailUserOps: "ops@example.com",
-  production: appConfig.nodeEnv === "production",
-  adminEmails:
-    appConfig.nodeEnv !== "production" ? ["admin@admin.example.com"] : [],
-};
+export const loadConfig = (): Config => {
+  const config: Config = {
+    host: getPublicUrl(),
+    production: appConfig.nodeEnv === "production",
+    databaseUri:
+      appConfig.databaseUri ??
+      `postgresql://wab@localhost/${appConfig.wabDbName}`,
+    adminEmails: appConfig.adminEmails,
+    sentryDSN: appConfig.sentryDSN,
+    sessionSecret: appConfig.sessionSecret,
+    mailFrom: appConfig.mailFrom,
+    mailUserOps: appConfig.mailUserOps,
+    mailBcc: appConfig.mailBcc,
+    port: appConfig.backendPort,
+  };
 
-export const loadConfig = memoizeOne((): Config => {
-  const config = parseConfigFromEnv();
-
-  // Validity checks on config
+  // Runtime validation for required fields in production
   if (config.production) {
-    assert(process.env["SESSION_SECRET"], "Production missing Session Secret");
-    assert(process.env["DATABASE_URI"], "Production missing DB Uri");
-    assert(process.env["HOST"], "Production missing Host");
+    if (!config.sessionSecret) {
+      throw new Error("Production missing Session Secret");
+    }
+    if (!config.databaseUri) {
+      throw new Error("Production missing DB Uri");
+    }
+    if (!config.host) {
+      throw new Error("Production missing Host");
+    }
   }
 
   return config;
-});
-
-function parseConfigFromEnv(): Config {
-  const config = Object.assign({}, DEFAULT_CONFIG);
-  const mailConfig = process.env["MAIL_CONFIG"]
-    ? JSON.parse(process.env["MAIL_CONFIG"])
-    : undefined;
-  const envConfig = {
-    host: process.env["HOST"],
-    databaseUri: process.env["DATABASE_URI"],
-    sentryDSN: process.env["SENTRY_DSN"],
-    sessionSecret: process.env["SESSION_SECRET"],
-    mailFrom: mailConfig?.mailFrom,
-    mailUserOps: mailConfig?.mailUserOps,
-    mailBcc: mailConfig?.mailBcc,
-    adminEmails: process.env["ADMIN_EMAILS"]
-      ? (JSON.parse(process.env["ADMIN_EMAILS"]) as string[]).map((email) =>
-          email.toLowerCase()
-        )
-      : undefined,
-  };
-
-  Object.entries(envConfig).forEach(([key, value]) => {
-    if (value == null) {
-      return;
-    }
-    config[key] = value;
-  });
-
-  return config;
-}
+};
