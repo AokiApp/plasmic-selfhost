@@ -7,8 +7,9 @@ import FileType from "file-type";
 import { extension } from "mime-types";
 import sharp from "sharp";
 import { failableAsync } from "ts-failable";
+import { appConfig } from "../nfigure-config";
 
-const siteAssetsBucket = process.env.SITE_ASSETS_BUCKET as string;
+const siteAssetsBucket = appConfig.siteAssetsBucket;
 const siteAssetsBaseUrl = process.env.SITE_ASSETS_BASE_URL as string;
 
 async function getFileType(buffer: Buffer | ArrayBuffer) {
