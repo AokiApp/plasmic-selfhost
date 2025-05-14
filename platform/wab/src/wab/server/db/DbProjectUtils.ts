@@ -56,6 +56,12 @@ export async function main() {
             type: "boolean",
             description:
               "Marks published PkgVersion as prefilled (doesn't actuall prefill)",
+          })
+          .option("keepProjectIdsAndNames", {
+            type: "boolean",
+            description:
+              "Keep the project IDs and names from the imported project",
+            default: false,
           });
       },
       spawnWrapper(uploadProject)
@@ -113,6 +119,7 @@ async function uploadProject(
     name: string;
     publish?: boolean;
     prefilled?: boolean;
+    keepProjectIdsAndNames?: boolean;
   }
 ) {
   console.log("Uploading project", opts);
@@ -127,7 +134,9 @@ async function uploadProject(
       mgr = new DbMgr(em, normalActor(user.id));
     }
 
-    const project = await doImportProject(bundles, mgr, new Bundler());
+    const project = await doImportProject(bundles, mgr, new Bundler(), {
+      keepProjectIdsAndNames: opts.keepProjectIdsAndNames,
+    });
 
     if (opts.name) {
       await mgr.updateProject({ id: project.id, name: opts.name });
