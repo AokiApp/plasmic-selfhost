@@ -132,7 +132,7 @@ export async function createBackend(
         databaseUri: dburi,
         port: port,
         host: `http://localhost:${port}`,
-        adminEmails: [],
+        superUserEmail: [],
         production: false,
         sessionSecret: "secret",
         mailFrom: "",
