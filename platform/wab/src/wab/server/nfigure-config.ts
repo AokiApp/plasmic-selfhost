@@ -20,7 +20,6 @@ export const AppConfigSchema = Type.Object({
   siteAssetsBaseUrl: Type.Optional(Type.String()),
   devBundleMigration: Type.Optional(Type.Boolean()),
   enabledGetEmailVerificationToken: Type.Optional(Type.Boolean()),
-  secretsFile: Type.Optional(Type.String()),
   backendPort: Type.Number({ default: 3004 }),
   loaderAssetsBucket: Type.String({ default: "plasmic-loader-assets-dev" }),
   socketPort: Type.Number({ default: 3020 }),
@@ -79,10 +78,6 @@ export const AppConfigSchema = Type.Object({
     discourseConnectSecret: Type.String(),
     apiKey: Type.String(),
   }),
-  dynamodb: Type.Object({
-    accessKeyId: Type.String(),
-    secretAccessKey: Type.String(),
-  }),
   anthropicApiKey: Type.Optional(Type.String()),
 
   google: Type.Object({
@@ -96,9 +91,6 @@ export const AppConfigSchema = Type.Object({
   googleSheets: Type.Object({
     clientId: Type.String(),
     clientSecret: Type.String(),
-  }),
-  stripe: Type.Object({
-    secretKey: Type.String(),
   }),
   vercel: Type.Object({
     plasmicHostingSecret: Type.String(),
