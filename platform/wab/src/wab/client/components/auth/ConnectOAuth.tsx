@@ -161,3 +161,25 @@ export function OktaSignInButton(props: {
     </ConnectOAuthButton>
   );
 }
+
+export function OidcSignInButton(props: {
+  oidcAuthUrl: string;
+  size?: PlasmicButton__VariantsArgs["size"];
+  children?: React.ReactNode;
+  onStart: () => void;
+  onSuccess: () => void;
+  onFailure: (reason: string) => void;
+}) {
+  return (
+    <ConnectOAuthButton
+      onStart={props.onStart}
+      onSuccess={props.onSuccess}
+      onFailure={props.onFailure}
+      url={props.oidcAuthUrl}
+      size={props.size}
+      waitingChildren={"Signing in via OIDC..."}
+    >
+      {props.children || "Log in with OIDC"}
+    </ConnectOAuthButton>
+  );
+}
