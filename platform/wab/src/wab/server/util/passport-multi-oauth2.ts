@@ -81,18 +81,28 @@ export class MultiOAuth2Strategy extends AbstractStrategy {
         ...options,
         ...res,
       } as StrategyOptions;
-      const strategy = this.makeDelegatedStrategy(res.provider, fullOptions);
+      const strategy = this.makeDelegatedStrategy(
+        res.provider,
+        fullOptions,
+        req
+      );
       strategy.authenticate(req);
     });
   }
 
-  private makeDelegatedStrategy(provider: KnownProvider, options: any) {
+  private makeDelegatedStrategy(
+    provider: KnownProvider,
+    options: any,
+    req: express.Request
+  ) {
     const make = () => {
       if (provider === "okta") {
         return new OktaStrategy(options, this.verify);
       } else if (provider === "oidc") {
         // OIDCはOAuth2Strategyで実装
-        return new OpenIDConnectStrategy(options, this.verify);
+        return new OpenIDConnectStrategy(options, (_, profile, cb) => {
+          this.verify(req, "at", "rt", profile, cb);
+        });
       } else {
         throw new Error(`Unknown provider ${provider}`);
       }
