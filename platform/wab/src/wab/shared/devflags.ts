@@ -283,7 +283,7 @@ const DEFAULT_DEVFLAGS = {
     process.env.CODEGEN_ORIGIN_HOST ||
     process.env.CODEGEN_HOST ||
     "http://codegen-origin.plasmic.app",
-  adminTeamDomain: production ? "plasmic.app" : "admin.example.com",
+  adminUiEnableDomain: "override.here.by.devflags.db",
   defaultHostUrl:
     process.env.REACT_APP_DEFAULT_HOST_URL ||
     "https://host.plasmicdev.com/static/host.html",
