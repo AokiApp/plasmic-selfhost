@@ -189,11 +189,11 @@ function timingDbMgr(dbMgr: DbMgr) {
   return dbMgr;
 }
 
-export function adminOnly(req: Request, res: Response, next: NextFunction) {
+export function superUserOnly(req: Request, res: Response, next: NextFunction) {
   const user = req.user as User | undefined;
   if (
     user?.email &&
-    req.config.adminEmails.includes(user.email.toLowerCase())
+    req.config.superUserEmail.includes(user.email.toLowerCase())
   ) {
     next();
   } else {
@@ -201,7 +201,7 @@ export function adminOnly(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export function adminOrDevelopmentEnvOnly(
+export function superUserOrDevelopmentEnvOnly(
   req: Request,
   res: Response,
   next: NextFunction
@@ -209,7 +209,7 @@ export function adminOrDevelopmentEnvOnly(
   if (appConfig.nodeEnv !== "production") {
     next();
   } else {
-    adminOnly(req, res, next);
+    superUserOnly(req, res, next);
   }
 }
 

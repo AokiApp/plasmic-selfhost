@@ -574,10 +574,7 @@ export function generateId() {
 export const DEFAULT_DEV_PASSWORD = "!53kr3tz!";
 
 export async function checkWeakPassword(password: string | undefined) {
-  if (
-    appConfig.nodeEnv !== "production" &&
-    password === DEFAULT_DEV_PASSWORD
-  ) {
+  if (appConfig.nodeEnv !== "production" && password === DEFAULT_DEV_PASSWORD) {
     return;
   }
 
@@ -1932,7 +1929,7 @@ export class DbMgr implements MigrationDbMgr {
   async updateAdminMode({ id, disabled }: { id: string; disabled: boolean }) {
     this.checkUserIdIsSelf(id);
     const user = await this.getUserById(id);
-    if (!loadConfig().adminEmails.includes(user.email)) {
+    if (!loadConfig().superUserEmail.includes(user.email)) {
       return user;
     }
     mergeSane(user, this.stampUpdate(), { adminModeDisabled: disabled });
