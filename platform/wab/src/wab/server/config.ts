@@ -5,7 +5,7 @@ export interface Config {
   host: string;
   production: boolean;
   databaseUri: string;
-  adminEmails: string[];
+  superUserEmail: string[];
   sentryDSN?: string;
   sessionSecret: string;
   mailFrom: string;
@@ -24,7 +24,7 @@ export const loadConfig = (): Config => {
     databaseUri:
       appConfig.databaseUri ??
       `postgresql://wab@localhost/${appConfig.wabDbName}`,
-    adminEmails: appConfig.adminEmails,
+    superUserEmail: appConfig.superUserEmails,
     sentryDSN: appConfig.sentryDSN,
     sessionSecret: appConfig.sessionSecret,
     mailFrom: appConfig.mail.from,

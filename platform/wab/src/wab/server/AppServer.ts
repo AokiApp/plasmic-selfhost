@@ -255,8 +255,8 @@ import { processSvgRoute } from "@/wab/server/routes/svg";
 import * as teamRoutes from "@/wab/server/routes/teams";
 import { getUsersById } from "@/wab/server/routes/users";
 import {
-  adminOnly,
-  adminOrDevelopmentEnvOnly,
+  superUserOnly,
+  superUserOrDevelopmentEnvOnly,
   superDbMgr,
   withNext,
 } from "@/wab/server/routes/util";
@@ -1359,209 +1359,221 @@ export function addMainAppServerRoutes(
   /**
    * Admin Routes
    */
-  app.post("/api/v1/admin/user", adminOnly, withNext(adminRoutes.createUser));
+  app.post(
+    "/api/v1/admin/user",
+    superUserOnly,
+    withNext(adminRoutes.createUser)
+  );
   app.post(
     "/api/v1/admin/clone",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.cloneProject)
   );
   app.post(
     "/api/v1/admin/revert-project-revision",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.revertProjectRevision)
   );
   app.post(
     "/api/v1/admin/resetPassword",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.resetPassword)
   );
 
   app.post(
     "/api/v1/admin/setPassword",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.setPassword)
   );
   app.post(
     "/api/v1/admin/updateMode",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.updateSelfAdminMode)
   );
-  app.get("/api/v1/admin/users", adminOnly, withNext(adminRoutes.listUsers));
+  app.get(
+    "/api/v1/admin/users",
+    superUserOnly,
+    withNext(adminRoutes.listUsers)
+  );
   app.get(
     "/api/v1/admin/feature-tiers",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.listAllFeatureTiers)
   );
   app.put(
     "/api/v1/admin/feature-tiers",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.addFeatureTier)
   );
   app.post(
     "/api/v1/admin/change-team-owner",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.changeTeamOwner)
   );
   app.post(
     "/api/v1/admin/upgrade-personal-team",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.upgradePersonalTeam)
   );
   app.post(
     "/api/v1/admin/reset-team-trial",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.resetTeamTrial)
   );
-  app.post("/api/v1/admin/teams", adminOnly, withNext(adminRoutes.listTeams));
+  app.post(
+    "/api/v1/admin/teams",
+    superUserOnly,
+    withNext(adminRoutes.listTeams)
+  );
   app.post(
     "/api/v1/admin/projects",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.listProjects)
   );
   app.post(
     "/api/v1/admin/workspaces",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.createWorkspace)
   );
   app.post(
     "/api/v1/admin/delete-project",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.deleteProject)
   );
   app.delete(
     "/api/v1/admin/delete-project-and-revisions",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.deleteProjectAndRevisions)
   );
   app.post(
     "/api/v1/admin/restore-project",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.restoreProject)
   );
   app.post(
     "/api/v1/admin/change-project-owner",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.updateProjectOwner)
   );
   app.post(
     "/api/v1/admin/login-as",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.adminLoginAs)
   );
   app.post(
     "/api/v1/admin/deactivate-user",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.deactivateUser)
   );
   app.post(
     "/api/v1/admin/upgrade-team",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.upgradeTeam)
   );
   app.get(
     "/api/v1/admin/devflags",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getDevFlagOverrides)
   );
   app.get(
     "/api/v1/admin/devflags/versions",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getDevFlagVersions)
   );
   app.put(
     "/api/v1/admin/devflags",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.setDevFlagOverrides)
   );
   app.post(
     "/api/v1/admin/upsert-sso",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.upsertSsoConfig)
   );
   app.get(
     "/api/v1/admin/get-sso",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getSsoByTeam)
   );
   app.post(
     "/api/v1/admin/create-tutorial-db",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.createTutorialDb)
   );
   app.post(
     "/api/v1/admin/reset-tutorial-db",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.resetTutorialDb)
   );
   app.get(
     "/api/v1/admin/get-team-by-white-label-name",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getTeamByWhiteLabelName)
   );
   app.post(
     "/api/v1/admin/update-team-white-label-info",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.updateTeamWhiteLabelInfo)
   );
   app.post(
     "/api/v1/admin/update-team-white-label-name",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.updateTeamWhiteLabelName)
   );
   app.post(
     "/api/v1/admin/promotion-code",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.createPromotionCode)
   );
   app.get(
     "/api/v1/admin/app-auth-metrics",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getAppAuthMetrics)
   );
   app.get(
     "/api/v1/admin/project/:projectId/app-meta",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getProjectAppMeta)
   );
   app.get(
     `/api/v1/admin/project/:projectId/rev`,
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getLatestProjectRevision)
   );
   app.post(
     `/api/v1/admin/project/:projectId/rev`,
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.saveProjectRevisionData)
   );
   app.get(
     `/api/v1/admin/pkg-version/data`,
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getPkgVersion)
   );
   app.post(
     `/api/v1/admin/pkg-version/:pkgVersionId`,
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.savePkgVersion)
   );
 
   app.get(
     "/api/v1/admin/teams/:teamId/discourse-info",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getTeamDiscourseInfo)
   );
   app.put(
     "/api/v1/admin/teams/:teamId/sync-discourse-info",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.syncTeamDiscourseInfo)
   );
   app.post(
     "/api/v1/admin/teams/:teamId/send-support-welcome-email",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.sendTeamSupportWelcomeEmail)
   );
   app.get(
     "/api/v1/admin/project-branches-metadata/:projectId",
-    adminOnly,
+    superUserOnly,
     withNext(adminRoutes.getProjectBranchesMetadata)
   );
 
@@ -1612,7 +1624,7 @@ export function addMainAppServerRoutes(
   // set project domains, thus we need to be more careful with it.
   app.post(
     "/api/v1/projects/import",
-    adminOrDevelopmentEnvOnly,
+    superUserOrDevelopmentEnvOnly,
     withNext(importProject)
   );
   app.get(
@@ -1655,7 +1667,7 @@ export function addMainAppServerRoutes(
   );
   app.get(
     "/api/v1/project-data/:projectId",
-    adminOnly,
+    superUserOnly,
     withNext(getFullProjectData)
   );
   app.put("/api/v1/projects/:projectId", withNext(updateProject));
