@@ -96,7 +96,8 @@ export class MultiOAuth2Strategy extends AbstractStrategy {
           (
             req: express.Request,
             issuer: string,
-            profile: Profile,
+            uiProfile: object,
+            idProfile: object,
             context: object,
             idToken: string | object,
             accessToken: string | object,
@@ -105,6 +106,12 @@ export class MultiOAuth2Strategy extends AbstractStrategy {
             done: OpenIDConnectStrategy.VerifyCallback
             // ref: https://github.com/jaredhanson/passport-openidconnect/blob/c69c2137c5b49534e93008aa0645a00aba1f7f0b/lib/strategy.js#L225
           ) => {
+            const profile = Object.assign({}, uiProfile, idProfile);
+            // uiProfile have secret fields _json.
+            // to get this, we need to use 10 arity
+            // then meld them together, with more modern way than the original
+            // implementation does
+
             return this.verify(req, accessToken, refreshToken, profile, done);
           }
         );
