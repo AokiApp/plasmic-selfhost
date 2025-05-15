@@ -29,6 +29,12 @@ export const AppConfigSchema = Type.Object({
   bwrapArgs: Type.Optional(Type.String()),
   superUserEmails: Type.Array(Type.String(), {
     default: ["admin@admin.example.com"],
+    description:
+      "A list of emails that are considered super users. These users unlock admin APIs.",
+  }),
+  adminUiEnableDomain: Type.String({
+    default: "plasmic.app",
+    description: "The domain that is allowed to access the admin UI in Studio.",
   }),
   databaseUri: Type.Optional(Type.String()),
   sentryDSN: Type.Optional(Type.String()),
