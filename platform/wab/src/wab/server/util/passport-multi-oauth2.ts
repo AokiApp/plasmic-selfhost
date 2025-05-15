@@ -4,7 +4,7 @@ import { _StrategyOptionsBase } from "passport-google-oauth20";
 import {
   StrategyOptions,
   StrategyOptionsWithRequest,
-  VerifyFunction,
+  VerifyFunction as OAuth2VerifyFunction,
   VerifyFunctionWithRequest,
 } from "passport-oauth2";
 import OktaStrategy from "passport-okta-oauth20/dist/src/Strategy";
@@ -61,7 +61,7 @@ export class MultiOAuth2Strategy extends AbstractStrategy {
   );
   constructor(
     opts: MultiOAuth2StrategyConfigWithoutRequest,
-    verify: VerifyFunction
+    verify: OAuth2VerifyFunction
   );
   constructor(private opts: MultiOAuth2StrategyConfig, private verify: any) {
     super();
@@ -81,28 +81,33 @@ export class MultiOAuth2Strategy extends AbstractStrategy {
         ...options,
         ...res,
       } as StrategyOptions;
-      const strategy = this.makeDelegatedStrategy(
-        res.provider,
-        fullOptions,
-        req
-      );
+      const strategy = this.makeDelegatedStrategy(res.provider, fullOptions);
       strategy.authenticate(req);
     });
   }
 
-  private makeDelegatedStrategy(
-    provider: KnownProvider,
-    options: any,
-    req: express.Request
-  ) {
+  private makeDelegatedStrategy(provider: KnownProvider, options: any) {
     const make = () => {
       if (provider === "okta") {
         return new OktaStrategy(options, this.verify);
       } else if (provider === "oidc") {
-        // OIDCはOAuth2Strategyで実装
-        return new OpenIDConnectStrategy(options, (_, profile, cb) => {
-          this.verify(req, "at", "rt", profile, cb);
-        });
+        return new OpenIDConnectStrategy(
+          options,
+          (
+            req: express.Request,
+            issuer: string,
+            profile: Profile,
+            context: object,
+            idToken: string | object,
+            accessToken: string | object,
+            refreshToken: string,
+            params: any,
+            done: OpenIDConnectStrategy.VerifyCallback
+            // ref: https://github.com/jaredhanson/passport-openidconnect/blob/c69c2137c5b49534e93008aa0645a00aba1f7f0b/lib/strategy.js#L225
+          ) => {
+            return this.verify(req, accessToken, refreshToken, profile, done);
+          }
+        );
       } else {
         throw new Error(`Unknown provider ${provider}`);
       }
