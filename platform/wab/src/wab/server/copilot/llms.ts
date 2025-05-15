@@ -2,71 +2,105 @@
  * Wrappers around LLM APIs. Currently just for caching and simple logging.
  */
 
-import { DbMgr } from "@/wab/server/db/DbMgr";
+import { SimpleCache, InMemoryCache } from "@/wab/server/simple-cache";
 import { appConfig } from "../nfigure-config";
-import { DynamoDbCache, SimpleCache } from "@/wab/server/simple-cache";
 import { last, mkShortId } from "@/wab/shared/common";
 import { showCompletionRequest } from "@/wab/shared/copilot/prompt-utils";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { createHash } from "crypto";
 import { pick } from "lodash";
 import {
   ChatCompletionRequestMessageRoleEnum,
   Configuration,
+  CreateChatCompletionRequest,
   OpenAIApi,
 } from "openai";
 import { stringify } from "safe-stable-stringify";
-
-export const chatGptDefaultPrompt = `You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.`;
-
-const openaiApiKey = appConfig.openaiApiKey;
-const openaiRaw = new OpenAIApi(
-  new Configuration({
-    apiKey: openaiApiKey,
-  })
-);
-
-const anthropicApiKey = appConfig.anthropicApiKey;
-
-const dynamoDbCredentials = appConfig.dynamodb;
 
 const verbose = false;
 
 const hash = (x: string) => createHash("sha256").update(x).digest("hex");
 
-export class OpenAIWrapper {
-  constructor(private openai: OpenAIApi, private cache: SimpleCache) {}
+export class LLMError extends Error {
+  constructor(message: string, public readonly originalError?: unknown) {
+    super(message);
+    this.name = "LLMError";
+  }
+}
 
-  createChatCompletion: OpenAIApi["createChatCompletion"] = async (
-    createChatCompletionRequest,
-    options
-  ) => {
+export abstract class LLMWrapper {
+  constructor(protected cache: SimpleCache) {}
+
+  abstract createChatCompletion(
+    createChatCompletionRequest: CreateChatCompletionRequest,
+    options?: AxiosRequestConfig
+  ): Promise<any>;
+
+  protected async getCachedResponse(key: string) {
+    const cached = await this.cache.get(key);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+    return null;
+  }
+
+  protected async cacheResponse(key: string, value: any) {
+    const stringValue = stringify(value);
+    if (stringValue === undefined) {
+      throw new Error("Failed to stringify value");
+    }
+    await this.cache.put(key, stringValue);
+    return JSON.parse(stringValue);
+  }
+}
+
+export class OpenAIWrapper extends LLMWrapper {
+  private openai: OpenAIApi;
+  constructor(cache: SimpleCache) {
+    super(cache);
+    this.openai = new OpenAIApi(
+      new Configuration({
+        apiKey: appConfig.openaiApiKey,
+      })
+    );
+  }
+
+  async createChatCompletion(
+    createChatCompletionRequest: CreateChatCompletionRequest,
+    options?: AxiosRequestConfig
+  ) {
     if (verbose) {
       console.log(showCompletionRequest(createChatCompletionRequest));
     }
+
     const key = hash(
-      JSON.stringify([
+      stringify([
         "OpenAI.createChatCompletion",
         createChatCompletionRequest,
         options,
       ])
     );
-    const value = await this.cache.get(key);
-    if (value) {
-      return JSON.parse(value);
+
+    try {
+      const cached = await this.getCachedResponse(key);
+      if (cached) {
+        return cached;
+      }
+
+      const result = pick(
+        await this.openai.createChatCompletion(
+          createChatCompletionRequest,
+          // @ts-expect-error axios dependency version incompat
+          options
+        ),
+        "data"
+      );
+
+      return this.cacheResponse(key, result);
+    } catch (error) {
+      throw new LLMError("OpenAI API error", error);
     }
-    const result = pick(
-      await this.openai.createChatCompletion(
-        createChatCompletionRequest,
-        options
-      ),
-      "data"
-    );
-    const value1 = stringify(result);
-    await this.cache.put(key, value1);
-    return JSON.parse(value1);
-  };
+  }
 }
 
 export interface ClaudeAIResponse {
@@ -90,60 +124,65 @@ function anthropicToOpenAIStopReason(reason: "stop_sequence" | "max_tokens") {
   return reason === "max_tokens" ? ("length" as const) : ("stop" as const);
 }
 
-export class AnthropicWrapper {
-  constructor(private cache: SimpleCache) {}
+export class AnthropicWrapper extends LLMWrapper {
+  constructor(cache: SimpleCache) {
+    super(cache);
+  }
 
-  createChatCompletion: OpenAIApi["createChatCompletion"] = async (
-    createChatCompletionRequest,
-    options
-  ) => {
+  async createChatCompletion(
+    createChatCompletionRequest: CreateChatCompletionRequest,
+    options?: AxiosRequestConfig
+  ) {
     if (verbose) {
       console.log(showCompletionRequest(createChatCompletionRequest));
     }
+
     const key = hash(
-      JSON.stringify([
+      stringify([
         "Anthropic.createChatCompletion",
         createChatCompletionRequest,
         options,
       ])
     );
-    const value = await this.cache.get(key);
-    if (value) {
-      return JSON.parse(value);
-    }
-
-    const prompt =
-      createChatCompletionRequest.messages
-        .map(
-          (message) =>
-            `${openAIToAnthropicRole(message.role)}: ${message.content}`
-        )
-        .join("\n\n") + "\n\nAssistant:";
-    const data = {
-      prompt,
-      model: "claude-v1",
-      max_tokens_to_sample: createChatCompletionRequest.max_tokens ?? 5000,
-      stop_sequences: ["\n\nHuman:"],
-      temperature: createChatCompletionRequest.temperature,
-    };
 
     try {
+      const cached = await this.getCachedResponse(key);
+      if (cached) {
+        return cached;
+      }
+
+      const prompt =
+        createChatCompletionRequest.messages
+          .map(
+            (message) =>
+              `${openAIToAnthropicRole(message.role)}: ${message.content}`
+          )
+          .join("\n\n") + "\n\nAssistant:";
+
+      const data = {
+        prompt,
+        model: "claude-v1",
+        max_tokens_to_sample: createChatCompletionRequest.max_tokens ?? 5000,
+        stop_sequences: ["\n\nHuman:"],
+        temperature: createChatCompletionRequest.temperature,
+      };
+
       const response = await axios.post<ClaudeAIResponse>(
         "https://api.anthropic.com/v1/complete",
         data,
         {
-          method: "POST",
           headers: {
             "content-type": "application/json",
-            "x-api-key": anthropicApiKey,
+            "x-api-key": appConfig.anthropicApiKey,
           },
         }
       );
+
       const adaptedResponse = {
         id: `chatcmpl-${mkShortId()}`,
         object: "chat.completion.chunk",
-        created: -1,
-        model: "gpt-3.5-turbo-0301",
+        created: Date.now(),
+        model: "claude-v1",
         usage: {
           prompt_tokens: 0,
           completion_tokens: -1, // TODO: Not possible to know number of tokens?
@@ -166,48 +205,16 @@ export class AnthropicWrapper {
           },
         ],
       };
-      const result = {
-        data: adaptedResponse,
-      };
-      const value1 = stringify(result);
-      await this.cache.put(key, value1);
-      return JSON.parse(value1);
+
+      const result = { data: adaptedResponse };
+      return this.cacheResponse(key, result);
     } catch (error) {
-      console.error("Error getting chat completions:", error);
-      throw error;
+      throw new LLMError("Anthropic API error", error);
     }
-  };
+  }
 }
 
-export const createOpenAIClient = (_?: DbMgr) =>
-  new OpenAIWrapper(
-    openaiRaw,
-    new DynamoDbCache(
-      new DynamoDBClient({
-        ...(dynamoDbCredentials
-          ? {
-              credentials: {
-                ...dynamoDbCredentials,
-              },
-            }
-          : {}),
-        region: "us-west-2",
-      })
-    )
-  );
+export const createOpenAIClient = () => new OpenAIWrapper(new InMemoryCache());
 
-export const createAnthropicClient = (_?: DbMgr) =>
-  new AnthropicWrapper(
-    new DynamoDbCache(
-      new DynamoDBClient({
-        ...(dynamoDbCredentials
-          ? {
-              credentials: {
-                ...dynamoDbCredentials,
-              },
-            }
-          : {}),
-        region: "us-west-2",
-      })
-    )
-  );
+export const createAnthropicClient = () =>
+  new AnthropicWrapper(new InMemoryCache());
