@@ -4,7 +4,7 @@ export function isAdminTeamEmail(
   email: string | undefined | null,
   devflags: DevFlagsType
 ): boolean {
-  return !!email && email.endsWith("@" + devflags.adminTeamDomain);
+  return !!email && email.endsWith("@" + devflags.adminUiEnableDomain);
 }
 
 export function isGoogleAuthRequiredEmailDomain(
