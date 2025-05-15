@@ -5,16 +5,41 @@ import {
   PutItemCommand,
 } from "@aws-sdk/client-dynamodb";
 
-export interface SimpleCache {
-  get(key: string): Promise<string | undefined>;
+export interface CacheOptions {
+  ttl?: number;
+}
 
-  put(key: string, value: string): Promise<void>;
+export interface SimpleCache {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string, options?: CacheOptions): Promise<void>;
+}
+
+export class InMemoryCache implements SimpleCache {
+  private cache = new Map<string, { value: string; expiry: number }>();
+
+  async get(key: string): Promise<string | null> {
+    const item = this.cache.get(key);
+    if (!item) return null;
+    if (Date.now() > item.expiry) {
+      this.cache.delete(key);
+      return null;
+    }
+    return item.value;
+  }
+
+  async put(key: string, value: string, options?: CacheOptions): Promise<void> {
+    const ttl = options?.ttl ?? 3600 * 1000; // 1 hour default
+    this.cache.set(key, {
+      value,
+      expiry: Date.now() + ttl,
+    });
+  }
 }
 
 export class DynamoDbCache implements SimpleCache {
   constructor(private client: DynamoDBClient) {}
 
-  async get(key: string): Promise<string | undefined> {
+  async get(key: string): Promise<string | null> {
     const command = new GetItemCommand({
       TableName: "llm-cache",
       Key: { key: { S: key } },
@@ -23,11 +48,11 @@ export class DynamoDbCache implements SimpleCache {
     if (response.Item?.["my-value"]?.S) {
       return response.Item["my-value"].S;
     } else {
-      return undefined;
+      return null;
     }
   }
 
-  async put(key: string, value: string): Promise<void> {
+  async put(key: string, value: string, options?: CacheOptions): Promise<void> {
     const command = new PutItemCommand({
       TableName: "llm-cache",
       Item: { key: { S: key }, "my-value": { S: value } },
@@ -41,7 +66,7 @@ export class DbMgrCache implements SimpleCache {
 
   async get(key: string) {
     const entry = await this.dbMgr.tryGetKeyValue("copilot-cache", key);
-    return entry?.value;
+    return entry?.value ?? null;
   }
 
   put(key: string, value: string) {
