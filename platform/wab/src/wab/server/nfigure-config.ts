@@ -83,7 +83,7 @@ export const AppConfigSchema = Type.Object({
     accessKeyId: Type.String(),
     secretAccessKey: Type.String(),
   }),
-  anthropicApiKey: Type.String(),
+  anthropicApiKey: Type.Optional(Type.String()),
 
   google: Type.Object({
     clientId: Type.String(),
