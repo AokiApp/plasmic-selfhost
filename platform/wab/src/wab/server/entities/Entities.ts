@@ -682,7 +682,8 @@ export type OauthTokenProvider =
   | "okta"
   | "ping"
   | "airtable"
-  | "google-sheets";
+  | "google-sheets"
+  | "oidc";
 
 const cryptr = new Cryptr(appConfig.encryptionKey);
 const encryptTransformer = {
@@ -1007,7 +1008,7 @@ export class SsoConfig extends Base<"SsoConfigId"> {
   ssoType: "oidc";
 
   @Column("text")
-  provider: "okta";
+  provider: "okta" | "oidc";
 
   @Index({ unique: true })
   @Column("text")

@@ -800,6 +800,7 @@ function ConfigureSso({ team, refetch }: TeamProps) {
                   }
                 >
                   <Select.Option value="okta">Okta</Select.Option>
+                  <Select.Option value="oidc">OIDC</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item name="config" label="Config">
