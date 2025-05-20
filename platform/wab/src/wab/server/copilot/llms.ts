@@ -86,7 +86,7 @@ export class OpenAIWrapper extends LLMWrapper {
       }
 
       const result = pick(
-        await this.openai.createChatCompletion(
+        await this.openai.chat.completions.create(
           createChatCompletionRequest,
           options
         ),
